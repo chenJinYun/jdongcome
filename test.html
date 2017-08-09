@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>京东呼吸灯</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .slide {
+      width: 730px;
+      height: 454px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .slide .slide-ul li {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+    }
+
+    .slide .slide-ul li.show {
+      opacity: 1;
+    }
+
+    .arrow {
+      display: none;
+    }
+
+    .arrow-left,
+    .arrow-right {
+      width: 28px;
+      height: 62px;
+      background-color: rgba(0, 0, 0, .4);
+      position: absolute;
+      top: 50%;
+      margin-top: -31px;
+      border-radius: 5px;
+      color: #fff;
+      font: bold 28px/62px consolas;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .arrow-right {
+      right: 0;
+    }
+
+    .circle {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      margin-left: -66px;
+      z-index: 99;
+      /*height: 18px;*/
+      /*width: 200px;*/
+    }
+
+    .circle li {
+      width: 18px;
+      height: 18px;
+      background-color: #333;
+      float: left;
+      margin: 0 2px;
+      text-align: center;
+      color: #fff;
+      line-height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .circle li.current {
+      background-color: red;
+    }
+  </style>
+  <script src="./jquery-1.12.2.js"></script>
+</head>
+
+<body>
+  <div class="slide">
+    <ul class="slide-ul">
+      <li class="show"><a href="#"><img src="images/yuanyuan.jpg" alt=""/></a></li>
+      <li><a href="#"><img src="images/qzx.jpg" alt=""/></a></li>
+      <li><a href="#"><img src="images/yuanyuan2.jpg" alt=""/></a></li>
+      <li><a href="#"><img src="images/zhonghanliang.jpg" alt=""/></a></li>
+      <li><a href="#"><img src="images/yuanyuan3.jpg" alt=""/></a></li>
+      <li><a href="#"><img src="images/tw.jpg" alt=""/></a></li>
+    </ul>
+    <div class="arrow">
+      <span class="arrow-left"><</span>
+      <span class="arrow-right">></span>
+    </div>
+    <ul class="circle">
+      <li class="current">1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+      <li>6</li>
+    </ul>
+  </div>
+</body>
+
+</html>
+<script>
+  $(function () {
+    // 获取元素
+    var lis = $('.slide-ul li');
+    var circle = $('.circle li');
+    // 鼠标移入移出实现按钮显示隐藏
+    $('.slide').on('mouseenter', function () {
+      $('.arrow').fadeIn(500);
+      clearInterval(timer);
+    })
+    $('.slide').on('mouseleave', function () {
+      $('.arrow').fadeOut(500);
+      timer=setInterval(function(){
+        autoPlay();
+      },1000)
+    })
+    // 点击按钮实现上下切换
+    // 标记当前的图片
+    // 实现节流，动画全部结束才进入下一次
+
+    var index = 0;
+    $('.arrow-left').on('click', function () {
+      // 只要有一个在动画中都是true，
+      // 如果全部都没有动画就是false
+      if(!lis.is(':animated')){
+        if (index <= 0) {
+        index = lis.length;
+      }
+      index--;
+      lis.eq(index).animate({ 'opacity': 1 }, 1000);
+      lis.eq(index + 1).animate({ 'opacity': 0 }, 1000);
+      circle.eq(index).addClass('current').siblings().removeClass('current');
+      }
+    })
+    // 
+    $('.arrow-right').on('click', function () {
+       if(!lis.is(":animated")){
+      autoPlay();
+       }
+    })
+    // 点击小圆点实现切换
+    circle.on('click',function(){
+    if(!lis.is(":animated")){
+        // 实现索引的同步
+      index=$(this).index();
+      lis.eq(index).animate({ 'opacity': 1 }, 1000).siblings().animate({ 'opacity': 0 }, 1000);
+      circle.eq(index).addClass('current').siblings().removeClass('current');
+      }
+    })  
+    // 自动轮播
+    var timer=setInterval(function () {
+      autoPlay();
+    }, 1000);
+    function autoPlay() {
+      if (index >= lis.length - 1) {
+        index = -1;
+      }
+      index++;
+      lis.eq(index).animate({ 'opacity': 1 }, 1000);
+      lis.eq(index - 1).animate({ 'opacity': 0 }, 1000);
+      circle.eq(index).addClass('current').siblings().removeClass('current');
+    }
+  })
+
+</script>
